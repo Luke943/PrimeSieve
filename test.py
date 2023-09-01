@@ -15,7 +15,7 @@ def main():
     try:
         limit = int(sys.argv[1])  # Choose the limit for prime numbers
     except:
-        limit = 10000000  # Default limit
+        limit = 10_000_000  # Default limit
 
     primes, execution_time = time_sieve(limit)
     print(f"Generated {len(primes)} prime numbers up to {limit}")

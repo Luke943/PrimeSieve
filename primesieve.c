@@ -8,6 +8,7 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
     int n;
     if (!PyArg_ParseTuple(args, "i", &n))
     {
+        PyErr_SetString(PyExc_ValueError, "Input must be an integer");
         return NULL;
     }
 
