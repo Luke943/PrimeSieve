@@ -1,6 +1,9 @@
 from distutils.core import setup, Extension
 
-module = Extension("primesieve", sources=["primesieve.c"])
+module = Extension(
+    name="primesieve",
+    sources=["primesieve.c"],
+)
 
 setup(
     name="primesieve",
