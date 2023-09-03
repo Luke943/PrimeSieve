@@ -77,20 +77,24 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
     return prime_list;
 }
 
+PyDoc_STRVAR(primesieve_sieve_doc,
+             "sieve(n, /)\n"
+             "--\n\n"
+             "Return a tuple of prime numbers <= n using the Sieve of Eratosthenes.\n");
+
 static PyMethodDef prime_methods[] = {
-    {"sieve", primesieve_sieve, METH_VARARGS, "Generate prime numbers using the Sieve of Eratosthenes."},
+    {"sieve", (PyCFunction)primesieve_sieve, METH_VARARGS, primesieve_sieve_doc},
     {NULL, NULL, 0, NULL} // Sentinel
 };
 
 static struct PyModuleDef primesievemodule = {
     PyModuleDef_HEAD_INIT,
-    "primesieve", // Module name
-    NULL,         // Module documentation, may be NULL
-    -1,           // Size of per-interpreter state of the module, or -1 if the module keeps state in global variables.
-    prime_methods // List of methods defined in the module
-};
+    "_primesieve",
+    PyDoc_STR("Prime number sieve -- C extension"),
+    -1, // Don't have any state so can be set to -1.
+    prime_methods};
 
-PyMODINIT_FUNC PyInit_primesieve(void)
+PyMODINIT_FUNC PyInit__primesieve(void)
 {
     return PyModule_Create(&primesievemodule);
 }
