@@ -1,0 +1,3 @@
+def sieve(limit: int) -> tuple[int]:
+    """Return all prime numbers up to a given limit."""
+    ...
