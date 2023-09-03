@@ -58,14 +58,14 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
         }
     }
 
-    PyObject *prime_list = PyTuple_New(count);
-    PyTuple_SetItem(prime_list, 0, PyLong_FromLong(2));
+    PyObject *prime_list = PyList_New(count);
+    PyList_SetItem(prime_list, 0, PyLong_FromLong(2));
     int index = 1;
     for (int i = 1; i < num_primes; i++)
     {
         if (is_prime[i / 8] & (1 << (i % 8)))
         {
-            PyTuple_SetItem(prime_list, index++, PyLong_FromLong(2 * i + 1));
+            PyList_SetItem(prime_list, index++, PyLong_FromLong(2 * i + 1));
         }
     }
 
@@ -80,7 +80,7 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
 PyDoc_STRVAR(primesieve_sieve_doc,
              "sieve(n, /)\n"
              "--\n\n"
-             "Return a tuple of prime numbers <= n using the Sieve of Eratosthenes.\n");
+             "Return a list of prime numbers <= n using the Sieve of Eratosthenes.\n");
 
 static PyMethodDef prime_methods[] = {
     {"sieve", (PyCFunction)primesieve_sieve, METH_VARARGS, primesieve_sieve_doc},
