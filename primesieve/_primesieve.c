@@ -67,7 +67,8 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
     }
     PyList_SetItem(prime_list, 0, PyLong_FromLong(2));
     unsigned int index = 1;
-    for (int i = 1; i < num_primes; i++)
+    int num_primes_s = (int)num_primes;
+    for (int i = 1; i < num_primes_s; i++)
     {
         if (is_prime[i / 8] & (1 << (i % 8)))
         {
