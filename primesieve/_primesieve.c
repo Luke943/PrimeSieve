@@ -5,7 +5,7 @@
 static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
 {
     // clock_t start_time = clock();
-    int n;
+    unsigned int n;
     if (!PyArg_ParseTuple(args, "i", &n))
     {
         PyErr_SetString(PyExc_ValueError, "Input must be an integer");
@@ -18,8 +18,8 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    int num_primes = (n - 1) / 2 + 1;
-    int num_bytes = (num_primes + 7) / 8;
+    unsigned int num_primes = (n - 1) / 2 + 1;
+    unsigned int num_bytes = (num_primes + 7) / 8;
 
     unsigned char *is_prime = (unsigned char *)malloc(num_bytes);
     if (!is_prime)
@@ -34,12 +34,12 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
     // clock_t init_time = clock();
     // printf("Initialization time: %f seconds\n", (double)(init_time - start_time) / CLOCKS_PER_SEC);
 
-    int sqrt_n = (int)sqrt(n);
-    for (int i = 3; i <= sqrt_n; i += 2)
+    unsigned int sqrt_n = (unsigned int)sqrt(n);
+    for (unsigned int i = 3; i <= sqrt_n; i += 2)
     {
         if (is_prime[(i - 1) / 2 / 8] & (1 << ((i - 1) / 2 % 8)))
         {
-            for (int j = i * i; j <= n; j += 2 * i)
+            for (unsigned int j = i * i; j <= n; j += 2 * i)
             {
                 is_prime[(j - 1) / 2 / 8] &= ~(1 << ((j - 1) / 2 % 8));
             }
@@ -49,8 +49,8 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
     // clock_t sieve_time = clock();
     // printf("Sieve time: %f seconds\n", (double)(sieve_time - init_time) / CLOCKS_PER_SEC);
 
-    int count = 0;
-    for (int i = 0; i < num_primes; i++)
+    unsigned int count = 0;
+    for (unsigned int i = 0; i < num_primes; i++)
     {
         if (is_prime[i / 8] & (1 << (i % 8)))
         {
@@ -59,13 +59,26 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
     }
 
     PyObject *prime_list = PyList_New(count);
+    if (!prime_list)
+    {
+        free(is_prime);
+        PyErr_NoMemory();
+        return NULL;
+    }
     PyList_SetItem(prime_list, 0, PyLong_FromLong(2));
-    int index = 1;
+    unsigned int index = 1;
     for (int i = 1; i < num_primes; i++)
     {
         if (is_prime[i / 8] & (1 << (i % 8)))
         {
-            PyList_SetItem(prime_list, index++, PyLong_FromLong(2 * i + 1));
+            PyObject *item = PyLong_FromLong(2 * i + 1);
+            if (!item)
+            {
+                Py_DECREF(prime_list);
+                PyErr_NoMemory();
+                return NULL;
+            }
+            PyList_SetItem(prime_list, index++, item);
         }
     }
 
@@ -73,7 +86,6 @@ static PyObject *primesieve_sieve(PyObject *self, PyObject *args)
     // printf("PyList time: %f seconds\n", (double)(PyList_time - sieve_time) / CLOCKS_PER_SEC);
 
     free(is_prime);
-
     return prime_list;
 }
 
