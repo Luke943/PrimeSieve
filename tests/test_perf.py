@@ -1,12 +1,12 @@
-import primesieve
 import sys
 import time
+import primesieve
 
 
 def time_sieve(n):
-    start_time = time.time()
+    start_time = time.perf_counter()
     primes = primesieve.sieve(n)
-    end_time = time.time()
+    end_time = time.perf_counter()
     # print(primes)
     return primes, end_time - start_time
 
