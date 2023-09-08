@@ -2,15 +2,15 @@
 
 Prime Sieve is a C extension module for Python that implements the Sieve of Eratosthenes algorithm to generate prime numbers.
 
-1. The C source file is named `primesieve.c`.
+1. The C source code is named `_primesieve.c`.
 2. The `setup.py` file is used to build the extension module.
 
 ## Building
 
-Run the following command to build the extension module:
+Clone the repository then run the following command to build and install:
 
 ```bash
-python setup.py build_ext --inplace
+pip install -e <path to this directory>
 ```
 
 This requires having a C compiler installed.
