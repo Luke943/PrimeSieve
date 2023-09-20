@@ -10,10 +10,8 @@ Prime Sieve is a C extension module for Python that implements the Sieve of Erat
 Clone the repository then run the following command to build and install:
 
 ```bash
-pip install -e <path to this directory>
+pip install [-e] relative/dir/PrimeSieve
 ```
-
-This requires having a C compiler installed.
 
 ## Usage
 
@@ -29,7 +27,7 @@ print(primes)
 To test execution speed for sieve up to `N`, you can run:
 
 ```bash
-python test.py N
+python tests/test_perf.py [N]
 ```
 
 If `N` is not provided, default value `10,000,000` is used.

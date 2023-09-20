@@ -17,9 +17,12 @@ def main():
     except:
         limit = 10_000_000  # Default limit
 
+    sieve_size = ((limit - 1) // 2 + 1 + 7) // 8
+
     primes, execution_time = time_sieve(limit)
     print(f"Generated {len(primes)} prime numbers up to {limit}")
     print(f"Execution time: {execution_time:.6f} seconds")
+    print(f"Memory use: {sieve_size} bytes to sieve, {primes.nbytes} bytes for results")
 
 
 if __name__ == "__main__":
