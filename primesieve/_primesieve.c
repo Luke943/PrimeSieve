@@ -61,7 +61,7 @@ primesieve_sieve(PyObject *self, PyObject *args)
         }
     }
 
-    PyObject *prime_array = PyArray_SimpleNew(1, (npy_intp[]){count}, NPY_ULONGLONG);
+    PyObject *prime_array = PyArray_SimpleNew(1, (npy_intp[]){count}, NPY_INTP);
     if (!prime_array)
     {
         free(is_prime);
