@@ -1,12 +1,10 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
 #include <math.h>
-// #include <time.h>
 
 static PyObject *
 primesieve_sieve(PyObject *self, PyObject *args)
 {
-    // clock_t start_time = clock();
     Py_ssize_t input;
     if (!PyArg_ParseTuple(args, "n", &input))
     {
@@ -24,7 +22,7 @@ primesieve_sieve(PyObject *self, PyObject *args)
     size_t num_primes = (n - 1) / 2 + 1;
     size_t num_bytes = (num_primes + 7) / 8;
 
-    unsigned char *is_prime = (unsigned char *)malloc(num_bytes);
+    unsigned char *is_prime = malloc(num_bytes);
     if (!is_prime)
     {
         PyErr_NoMemory();
@@ -33,9 +31,6 @@ primesieve_sieve(PyObject *self, PyObject *args)
 
     // Initialize bit array to all ones(all numbers are considered prime initially)
     memset(is_prime, 0xFF, num_bytes);
-
-    // clock_t init_time = clock();
-    // printf("Initialization time: %f seconds\n", (double)(init_time - start_time) / CLOCKS_PER_SEC);
 
     size_t sqrt_n = (size_t)sqrt(n);
     for (size_t i = 3; i <= sqrt_n; i += 2)
@@ -48,9 +43,6 @@ primesieve_sieve(PyObject *self, PyObject *args)
             }
         }
     }
-
-    // clock_t sieve_time = clock();
-    // printf("Sieve time: %f seconds\n", (double)(sieve_time - init_time) / CLOCKS_PER_SEC);
 
     size_t count = 0;
     for (size_t i = 0; i < num_primes; i++)
@@ -79,20 +71,75 @@ primesieve_sieve(PyObject *self, PyObject *args)
         }
     }
 
-    // clock_t PyList_time = clock();
-    // printf("PyArray time: %f seconds\n", (double)(PyList_time - sieve_time) / CLOCKS_PER_SEC);
-
     free(is_prime);
     return prime_array;
 }
 
 PyDoc_STRVAR(primesieve_sieve_doc,
-             "sieve(n, /)\n"
+             "primes(n, /)\n"
              "--\n\n"
-             "Return a list of prime numbers <= n using the Sieve of Eratosthenes.\n");
+             "Return an array of prime numbers <= n using the Sieve of Eratosthenes.\n");
+
+static PyObject *
+primesieve_factors(PyObject *self, PyObject *args)
+{
+    int n;
+    if (!PyArg_ParseTuple(args, "i", &n))
+    {
+        PyErr_SetString(PyExc_TypeError, "Input must be an integer");
+        return NULL;
+    }
+
+    if (n < 2)
+    {
+        PyErr_SetString(PyExc_ValueError, "Input must be greater than or equal to 2");
+        return NULL;
+    }
+
+    n++;
+    int prod = 1;
+    int max_unique_factors = -1;
+    int small_primes[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+    while (prod < n)
+    {
+        prod *= small_primes[++max_unique_factors];
+    }
+
+    char *factor_counts = malloc(sizeof(char) * n);
+    PyObject *prime_factors = (PyArrayObject *)PyArray_Zeros(2, (npy_intp[]){n, max_unique_factors}, PyArray_DescrFromType(NPY_INT), 0);
+    if (!factor_counts || !prime_factors)
+    {
+        free(factor_counts);
+        Py_XDECREF(prime_factors);
+        PyErr_NoMemory();
+        return NULL;
+    }
+    memset(factor_counts, 0x00, sizeof(char) * n);
+
+    for (int i = 2; i < n; i++)
+    {
+        if (factor_counts[i])
+        {
+            continue;
+        }
+        for (int j = i; j < n; j += i)
+        {
+            *(int *)PyArray_GETPTR2(prime_factors, j, factor_counts[j]++) = i;
+        }
+    }
+
+    free(factor_counts);
+    return prime_factors;
+}
+
+PyDoc_STRVAR(primesieve_factors_doc,
+             "factors(n, /)\n"
+             "--\n\n"
+             "Return a 2d array with unique prime factors for each number <= n.\n");
 
 static PyMethodDef prime_methods[] = {
     {"sieve", (PyCFunction)primesieve_sieve, METH_VARARGS, primesieve_sieve_doc},
+    {"factors", (PyCFunction)primesieve_factors, METH_VARARGS, primesieve_factors_doc},
     {NULL, NULL, 0, NULL} // Sentinel
 };
 

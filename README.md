@@ -1,16 +1,18 @@
 # Prime Sieve
 
-Prime Sieve is a C extension module for Python that implements the Sieve of Eratosthenes algorithm to generate prime numbers.
+Prime Sieve is a C extension module for Python to generate prime numbers and prime factors.
 
-1. The C source code is named `_primesieve.c`.
-2. The `setup.py` file is used to build the extension module.
+### Key features
+
+- Implement the Sieve of Eratosthenes algorithm to generate prime numbers.
+- Sieve the unique prime factors for all numbers in a range.
 
 ## Building
 
-Clone the repository then run the following command to build and install:
+Clone the repository then install:
 
 ```bash
-pip install [-e] relative/dir/PrimeSieve
+python -m pip install [-e] path/to/PrimeSieve
 ```
 
 ## Usage
@@ -18,16 +20,24 @@ pip install [-e] relative/dir/PrimeSieve
 Now you can use the extension module in your Python code:
 
 ```python
-import primesieve
+>>> import primesieve  
 
-primes = primesieve.sieve(100)
-print(primes)
+>>> primesieve.sieve(100)
+array([ 2,  3,  5,  7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59,
+       61, 67, 71, 73, 79, 83, 89, 97], dtype=int64)
+
+>>> primesieve.factors(100) 
+array([[ 0,  0,  0],
+       [ 0,  0,  0],
+       [ 2,  0,  0],
+       [ 3,  0,  0],
+       [ 2,  0,  0],
+        ...,
+       [ 2,  3,  0],
+       [97,  0,  0],
+       [ 2,  7,  0],
+       [ 3, 11,  0],
+       [ 2,  5,  0]], dtype=int32)
 ```
 
-To test execution speed for sieve up to `N`, you can run:
-
-```bash
-python tests/test_perf.py [N]
-```
-
-If `N` is not provided, default value `10,000,000` is used.
+Tests for functionality and performance are included in the `test` directory.
